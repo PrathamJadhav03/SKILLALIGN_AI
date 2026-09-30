@@ -25,13 +25,13 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     # Automatically seed a profile so the user has a personalized dashboard
     if user.role_id == 4:
         from app.models.candidate import Candidate
-        db.add(Candidate(first_name="New", last_name="Candidate", user_id=db_user.id))
+        db.add(Candidate(first_name=user.first_name, last_name=user.last_name, user_id=db_user.id))
     elif user.role_id == 2:
         from app.models.employer import Employer
-        db.add(Employer(name="New Employer", industry="Technology", user_id=db_user.id))
+        db.add(Employer(name=f"{user.first_name} {user.last_name} Company", industry="Technology", user_id=db_user.id))
     elif user.role_id == 3:
         from app.models.institute import Institute
-        db.add(Institute(name="New Institute", type="Private", user_id=db_user.id))
+        db.add(Institute(name=f"{user.first_name} {user.last_name} Institute", type="Private", user_id=db_user.id))
     db.commit()
     
     return db_user
