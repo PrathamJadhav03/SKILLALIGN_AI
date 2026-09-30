@@ -1,7 +1,25 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Building2, ArrowRight, Briefcase, Users, ClipboardCheck, Activity } from 'lucide-react';
+import api from '../../services/api';
+import { getUserId } from '../../utils/auth';
 
 export default function EmployerHome() {
+  const [employerName, setEmployerName] = useState('SkillAlign AI');
+
+  useEffect(() => {
+    const userId = getUserId();
+    if (userId) {
+      api.get(`/employers/${userId}/dashboard`)
+        .then(res => {
+          if (res.data && res.data.employer_name) {
+            setEmployerName(res.data.employer_name);
+          }
+        })
+        .catch(err => console.error(err));
+    }
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
@@ -9,14 +27,14 @@ export default function EmployerHome() {
           <div>
             <h1 className="text-3xl font-black text-slate-800 mb-2 flex items-center gap-3">
               <Building2 className="text-blue-600" size={32} />
-              Welcome to SkillAlign AI
+              Welcome, {employerName}
             </h1>
             <p className="text-slate-500 text-lg">Employer Portal</p>
           </div>
           <div className="text-left md:text-right flex items-center gap-6">
             <div>
               <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Organization</p>
-              <p className="font-bold text-slate-700">Acme Technologies</p>
+              <p className="font-bold text-slate-700">{employerName}</p>
             </div>
             <div>
               <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Role</p>

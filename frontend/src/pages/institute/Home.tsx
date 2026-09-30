@@ -1,7 +1,25 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Building, ArrowRight, BookOpen, Users, AlertTriangle, Briefcase, Plus } from 'lucide-react';
+import api from '../../services/api';
+import { getUserId } from '../../utils/auth';
 
 export default function InstituteHome() {
+  const [instituteName, setInstituteName] = useState('SkillAlign AI');
+
+  useEffect(() => {
+    const userId = getUserId();
+    if (userId) {
+      api.get(`/institutes/${userId}/dashboard`)
+        .then(res => {
+          if (res.data && res.data.institute_name) {
+            setInstituteName(res.data.institute_name);
+          }
+        })
+        .catch(err => console.error(err));
+    }
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
@@ -9,7 +27,7 @@ export default function InstituteHome() {
           <div>
             <h1 className="text-3xl font-black text-slate-800 mb-2 flex items-center gap-3">
               <Building className="text-emerald-600" size={32} />
-              Welcome to SkillAlign AI
+              Welcome, {instituteName}
             </h1>
             <p className="text-slate-500 text-lg">Training Institute Portal</p>
           </div>

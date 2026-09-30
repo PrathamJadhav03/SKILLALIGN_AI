@@ -1,14 +1,32 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, ArrowRight, UserCheck, TrendingUp, BookOpen, Briefcase } from 'lucide-react';
+import api from '../../services/api';
+import { getUserId } from '../../utils/auth';
 
 export default function CandidateHome() {
+  const [firstName, setFirstName] = useState('Candidate');
+
+  useEffect(() => {
+    const userId = getUserId();
+    if (userId) {
+      api.get(`/candidates/${userId}`)
+        .then(res => {
+          if (res.data && res.data.first_name) {
+            setFirstName(res.data.first_name);
+          }
+        })
+        .catch(err => console.error("Error fetching candidate:", err));
+    }
+  }, []);
+
   return (
     <div className="max-w-4xl mx-auto space-y-4 md:space-y-6 px-2 md:px-0 pb-8">
       <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
         <div className="flex items-center gap-3 mb-2">
           <Users className="text-amber-500" size={28} />
           <h1 className="text-2xl md:text-3xl font-black text-slate-800">
-            Welcome back, Candidate!
+            Welcome back, {firstName}!
           </h1>
         </div>
         <p className="text-slate-500 text-base md:text-lg">Your Personal Career Workspace</p>
